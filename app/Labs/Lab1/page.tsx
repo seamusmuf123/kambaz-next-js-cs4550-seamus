@@ -163,11 +163,11 @@ Your favorite books (in no particular order)
       <div id="wd-images">
   <h4>Image tag</h4>
   Loading an image from the internet: <br />
-  <img id="wd-starship" width="400px"   src="https://www.staradvertiser.com/wp-content/uploads/2021/08/web1_Starship-gap2.jpg" />
+  <img id="wd-starship" width="400px" src="https://www.staradvertiser.com/wp-content/uploads/2021/08/web1_Starship-gap2.jpg" alt="SpaceX Starship" />
   <br />
   Loading a local image:
   <br />
-  <img id="wd-teslabot" src="https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-bot-gen-2-1024x570.jpg" height="200px" /></div>
+  <img id="wd-teslabot" src="https://www.teslarati.com/wp-content/uploads/2023/12/tesla-optimus-bot-gen-2-1024x570.jpg" height="200px" alt="Tesla Optimus Bot" /></div>
   <div id="wd-forms">
   <h4>Form Elements</h4>
   {/* <form id="wd-text-fields"> */}
