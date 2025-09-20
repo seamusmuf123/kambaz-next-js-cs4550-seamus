@@ -1,3 +1,4 @@
+import Link from "next/link";
 export default function Assignments() {
   return (
     <div id="wd-assignments">
@@ -9,30 +10,27 @@ export default function Assignments() {
         ASSIGNMENTS 40% of Total <button>+</button> </h3>
       <ul id="wd-assignment-list">
         <li className="wd-assignment-list-item">
-          <a href="/Courses/1234/Assignments/123"
-             className="wd-assignment-link" >
+          <Link href="/Courses/1234/Assignments/123" className="wd-assignment-link">
             A1 - INTRO + HTML
-          </a> </li>
+          </Link> </li>
         <li className="wd-assignment-list-item">
           Multiple Modules | Not Available Until 09/12/2025 | Due: 09/21/2025 at 11:59pm | 100 pts
         </li>
       </ul>
       <ul id="wd-assignment-list">
         <li className="wd-assignment-list-item">
-          <a href="/Courses/1234/Assignments/1234"
-             className="wd-assignment-link" >
+          <Link href="/Courses/1234/Assignments/1234" className="wd-assignment-link">
             A2 - CSS + BOOTSTRAP
-          </a> </li>
+          </Link> </li>
         <li className="wd-assignment-list-item">
             Multiple Modules | Not Available Until 09/27/2025 | Due: 10/05/2025 at 11:59pm | 100 pts
         </li>
       </ul>
       <ul id="wd-assignment-list">
         <li className="wd-assignment-list-item">
-          <a href="/Courses/1234/Assignments/12345"
-             className="wd-assignment-link" >
+          <Link href="/Courses/1234/Assignments/12345" className="wd-assignment-link">
             A3 - JAVASCRIPT + REACT
-          </a> </li>
+          </Link> </li>
         <li className="wd-assignment-list-item">
             Multiple Modules | Not Available Until 09/11/2025 | Due: 09/17/2025 at 11:59pm | 100 pts
         </li>
