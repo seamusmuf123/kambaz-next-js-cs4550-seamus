@@ -21,5 +21,8 @@ export default function TOC() {
      <NavItem>
        <NavLink href="https://github.com/jannunzi">My GitHub</NavLink>
      </NavItem>
+     <NavItem>
+       <NavLink href="https://github.com/seamusmuf123/kambaz-next-js-cs4550-seamus">Seamus Mufarinya</NavLink>
+     </NavItem>
    </Nav>
 );}
