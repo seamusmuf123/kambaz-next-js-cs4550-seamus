@@ -1,3 +1,6 @@
+import Button from "react-bootstrap/esm/Button";
+import { FaPlus } from "react-icons/fa";
+
 export default function AssignmentEditor() {
   return (
     <div id="wd-assignments-editor">
@@ -81,6 +84,9 @@ export default function AssignmentEditor() {
        defaultValue="2025-09-12"
        id="wd-Until"/><br/>
       </table>
-        <button type="button">Cancel</button> <button type="button">Save</button>
+        <button type="button">Cancel</button>
+     <Button variant="danger" size="lg" className="me-1 float-end" id="wd-add-module-btn">
+       Save
+     </Button>
     </div>
 );}
