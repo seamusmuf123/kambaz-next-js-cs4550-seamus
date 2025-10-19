@@ -1,28 +1,34 @@
+"use client";
 import { Nav, NavItem, NavLink } from "react-bootstrap";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 export default function TOC() {
+  const pathname = usePathname();
+
+  const links = [
+   { href: "/Labs",     label: "Labs",  id: "wd-labs-link" },
+   { href: "/Labs/Lab1",label: "Lab1", id: "wd-lab1-link" },
+   { href: "/Labs/Lab2",label: "Lab2", id: "wd-lab2-link" },
+   { href: "/",         label: "Kambaz",id: "wd-kambaz-link"},
+   { href: "http://github.com/jannunzi",
+                        label: "My GitHub",
+                        id: "wd-github-link" },
+                      { href: "https://github.com/seamusmuf123/kambaz-next-js-cs4550-seamus",
+                        label: "Seamus Mufarinya",
+                        id: "wd-seamus-link" }
+                    ];
  return (
    <Nav variant="pills">
-     <NavItem>
-       <NavLink href="/Labs" as={Link}>Labs</NavLink>
-     </NavItem>
-     <NavItem>
-       <NavLink href="/Labs/Lab1" as={Link}>Lab 1</NavLink>
-     </NavItem>
-     <NavItem>
-       <NavLink href="/Labs/Lab2" as={Link}>Lab 2</NavLink>
-     </NavItem>
-     <NavItem>
-       <NavLink href="/Labs/Lab3" as={Link}>Lab 3</NavLink>
-     </NavItem>
-     <NavItem>
-       <NavLink href="/" as={Link}>Kambaz</NavLink>
-     </NavItem>
-     <NavItem>
-       <NavLink href="https://github.com/jannunzi">My GitHub</NavLink>
-     </NavItem>
-     <NavItem>
-       <NavLink href="https://github.com/seamusmuf123/kambaz-next-js-cs4550-seamus">Seamus Mufarinya</NavLink>
-     </NavItem>
+    {links.map((link) => (
+       <NavItem key={link.id}>
+         <NavLink as={Link}
+          className={pathname.endsWith(link.href)
+                        ? "active" : ""}
+                  href={link.href}
+                  id={link.id}>
+           {link.label}
+         </NavLink>
+       </NavItem>
+     ))}
    </Nav>
 );}

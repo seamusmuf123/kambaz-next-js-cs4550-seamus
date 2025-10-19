@@ -1,13 +1,19 @@
+"use client";
+import React from "react";
+import { useParams } from "next/navigation";
 import Button from "react-bootstrap/esm/Button";
-import { FaPlus } from "react-icons/fa";
+import { assignments } from "../../../../Database";
+
 
 export default function AssignmentEditor() {
+  const { cid, aid } = useParams<{ cid: string; aid: string }>();
+  const assignment = assignments.find(a => String(a._id) === String(aid));
   return (
     <div id="wd-assignments-editor">
-      <label htmlFor="wd-name">Assignment Name</label>
-      <input id="wd-name" defaultValue="A1 - ENV + HTML" /><br /><br />
+      <label htmlFor="wd-name"> Assignment Name</label>
+      <input id="wd-name" defaultValue={assignment?.title} /><br /><br />
       <textarea id="wd-description">
-        The assignment is available online. Submit a link to the landing page of the github.
+{assignment?.description}
       </textarea>
       <br />
       <table>
@@ -16,7 +22,7 @@ export default function AssignmentEditor() {
             <label htmlFor="wd-points">Points</label>
           </td>
           <td>
-            <input id="wd-points" defaultValue={100} />
+            <input id="wd-points" defaultValue={assignment?.points} />
           </td>
         </tr>
         <td align="right" valign="top">
@@ -73,15 +79,15 @@ export default function AssignmentEditor() {
         </tr>
         <label htmlFor="wd-Due"> Due </label>
 <input type="date"
-       defaultValue="2025-09-21"
+       defaultValue={assignment?.dueDate}
        id="wd-Due"/><br/>
        <label htmlFor="wd-Available-from"> Available from </label>
 <input type="date"
-       defaultValue="2025-09-12"
+       defaultValue={assignment?.availableDate}
        id="wd-Available-from"/><br/>
        <label htmlFor="wd-Until"> Until: </label>
 <input type="date"
-       defaultValue="2025-09-12"
+       defaultValue={assignment?.availableUntilDate}
        id="wd-Until"/><br/>
       </table>
         <button type="button">Cancel</button>
