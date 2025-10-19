@@ -13,9 +13,8 @@ export default function PeopleTable() {
   role: string;
   lastActivity: string;
   totalActivity: string;
-  avatar?: string;
 };
-const people: Person[] = db.users.map((user: any) => ({
+const people = db.users.map((user) => ({
   _id: user._id,
   name: `${user.firstName} ${user.lastName}`,
   loginId: user.loginId,
@@ -23,7 +22,6 @@ const people: Person[] = db.users.map((user: any) => ({
   role: user.role,
   lastActivity: user.lastActivity,
   totalActivity: user.totalActivity,
-  avatar: user.avatar,
 }));
     const { cid } = useParams();
   const { users, enrollments } = db;
@@ -38,7 +36,7 @@ const people: Person[] = db.users.map((user: any) => ({
     .filter((usr) =>
       enrollments.some((enrollment) => enrollment.user === usr._id && enrollment.course === cid)
     )
-    .map((user: any) => (
+    .map((user) => (
      <tr key={user._id}>
       <td className="wd-full-name text-nowrap">
           <FaUserCircle className="me-2 fs-1 text-secondary" />
