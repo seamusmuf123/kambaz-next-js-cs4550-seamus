@@ -1,11 +1,12 @@
 export default function AddingAndRemovingToFromArrays() {
-  let numberArray1 = [1, 2, 3, 4, 5];
-  let stringArray1 = ["string1", "string2"];
-  let todoArray = [<li>Buy milk</li>, <li>Feed the pets</li>];
-  numberArray1.push(6); // adding new items
+  const numberArray1 = [1, 2, 3, 4, 5];
+  const stringArray1 = ["string1", "string2"];
+
+  const todoArray = ["Buy milk", "Feed the pets"];
+  numberArray1.push(6); 
   stringArray1.push("string3");
-  todoArray.push(<li>Walk the dogs</li>);
-  numberArray1.splice(2, 1); // remove 1 item starting at 2
+  todoArray.push("Walk the dogs");
+  numberArray1.splice(2, 1); 
   stringArray1.splice(1, 1);
   return (
     <div id="wd-adding-removing-from-arrays">
@@ -13,5 +14,12 @@ export default function AddingAndRemovingToFromArrays() {
       numberArray1 = {numberArray1} <br />
       stringArray1 = {stringArray1} <br />
       Todo list:
-      <ol>{todoArray}</ol><hr />
-    </div> );}
+      <ol>
+        {todoArray.map((todo, i) => (
+          <li key={i}>{todo}</li>
+        ))}
+      </ol>
+      <hr />
+    </div>
+  );
+}

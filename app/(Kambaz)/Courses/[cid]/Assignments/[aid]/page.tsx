@@ -6,7 +6,7 @@ import { assignments } from "../../../../Database";
 
 
 export default function AssignmentEditor() {
-  const { cid, aid } = useParams<{ cid: string; aid: string }>();
+  const { aid } = useParams<{ aid: string }>();
   const assignment = assignments.find(a => String(a._id) === String(aid));
   return (
     <div id="wd-assignments-editor">

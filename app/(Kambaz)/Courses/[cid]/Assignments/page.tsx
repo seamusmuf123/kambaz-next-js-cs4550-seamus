@@ -11,7 +11,7 @@ import AssignmentControlSection from "./AssignmentControlSection";
 import * as db from "../../../Database";
 import { useParams } from "next/navigation";
 
-    type Assignment = {
+type Assignment = {
   _id: string;
   title: string;
   startDate: Date;
@@ -20,16 +20,27 @@ import { useParams } from "next/navigation";
   course: string;
 };
 
+type RawAssignment = {
+  _id: string;
+  title: string;
+  description?: string;
+  availableDate?: string;
+  dueDate?: string;
+  availableUntilDate?: string;
+  points: number;
+  course: string;
+};
+
 export default function Assignments() {
   const { cid } = useParams();
 
-  const items: Assignment[] = db.assignments
+  const items: Assignment[] = (db.assignments as RawAssignment[])
     .filter((a) => a.course === cid)
     .map((a) => ({
       _id: a._id,
       title: a.title,
-      startDate: new Date(a.availableDate),
-      dueDate: new Date(a.dueDate),
+      startDate: new Date(a.availableDate ?? ""),
+      dueDate: new Date(a.dueDate ?? ""),
       points: a.points,
       course: a.course,
     }));
@@ -70,4 +81,4 @@ export default function Assignments() {
       </div>
     </div>
   );
-} 
+}
