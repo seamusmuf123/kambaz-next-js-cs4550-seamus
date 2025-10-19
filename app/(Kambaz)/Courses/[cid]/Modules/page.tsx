@@ -10,8 +10,10 @@ import { useParams } from "next/navigation";
 import * as db from "../../../Database";
 
 export default function Modules() {
-  const { cid } = useParams();
-  const modules = db.modules;
+  type Lesson = { _id: string; name: string };
+type Module = { _id: string; name: string; lessons: Lesson[]; course: string };
+const { cid } = useParams();
+const modules: Module[] = (db.modules as Module[]).filter(m => m.course === cid);
   return (
     <div>
        <ModulesControls /><br /><br /><br /><br />

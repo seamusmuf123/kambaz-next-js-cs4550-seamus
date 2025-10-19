@@ -15,6 +15,26 @@ export default function Assignments() {
     const { cid } = useParams();
     const assignment = db.assignments;
 
+    type Assignment = {
+  _id: string;
+  title: string;
+  startDate: Date;
+  dueDate: Date;
+  points: number;
+  course: string;
+};
+
+const items: Assignment[] = db.assignments
+  .filter(a => a.course === cid)
+  .map(a => ({
+    _id: a._id,
+    title: a.title,
+    startDate: new Date(a.availableDate),
+    dueDate: new Date(a.dueDate),
+    points: a.points,
+    course: a.course,
+  }));
+
   return (
     <div>
       <AssignmentControls /><br /><br /><br /><br />

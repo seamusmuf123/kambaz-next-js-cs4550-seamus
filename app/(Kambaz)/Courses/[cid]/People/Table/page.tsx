@@ -5,6 +5,26 @@ import { FaUserCircle } from "react-icons/fa";
 import { useParams } from "next/navigation";
 import * as db from "../../../../Database";
 export default function PeopleTable() {
+  type Person = {
+  _id: string;
+  name: string;
+  loginId: string;
+  section: string;
+  role: string;
+  lastActivity: string;
+  totalActivity: string;
+  avatar?: string;
+};
+const people: Person[] = db.users.map((user: any) => ({
+  _id: user._id,
+  name: `${user.firstName} ${user.lastName}`,
+  loginId: user.loginId,
+  section: user.section,
+  role: user.role,
+  lastActivity: user.lastActivity,
+  totalActivity: user.totalActivity,
+  avatar: user.avatar,
+}));
     const { cid } = useParams();
   const { users, enrollments } = db;
  return (
