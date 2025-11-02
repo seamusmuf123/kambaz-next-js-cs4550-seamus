@@ -3,10 +3,10 @@ import React from "react";
 import { useParams } from "next/navigation";
 import Button from "react-bootstrap/esm/Button";
 import { assignments } from "../../../../Database";
-
+import Link from "next/link";
 
 export default function AssignmentEditor() {
-  const { aid } = useParams<{ aid: string }>();
+  const { cid, aid } = useParams<{ cid: string; aid: string }>();
   const assignment = assignments.find(a => String(a._id) === String(aid));
   return (
     <div id="wd-assignments-editor">
@@ -90,9 +90,14 @@ export default function AssignmentEditor() {
        defaultValue={assignment?.availableUntilDate}
        id="wd-Until"/><br/>
       </table>
-        <button type="button">Cancel</button>
-     <Button variant="danger" size="lg" className="me-1 float-end" id="wd-add-module-btn">
-       Save
-     </Button>
+      <Link href={`/Courses/${cid}/Assignments`}>
+        <Button variant="secondary" type="button">Cancel</Button>
+      </Link>
+      <Link href={`/Courses/${cid}/Assignments`}>
+        <Button variant="danger" size="lg" className="me-1 float-end" id="wd-add-module-btn">
+          Save
+        </Button>
+      </Link>
     </div>
-);}
+  );
+}
