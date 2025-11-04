@@ -1,100 +1,82 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
-import Button from "react-bootstrap/esm/Button";
-import { assignments } from "../../../../Database";
 import Link from "next/link";
+import Button from "react-bootstrap/esm/Button";
+import { useSelector, useDispatch } from "react-redux";
+import { updateAssignment } from "../reducer";
+import Breadcrumb from "../../Breadcrumb";
 
 export default function AssignmentEditor() {
   const { cid, aid } = useParams<{ cid: string; aid: string }>();
-  const assignment = assignments.find(a => String(a._id) === String(aid));
+  const dispatch = useDispatch();
+
+  const assignments: any[] = useSelector((state: any) => state.assignmentsReducer?.assignments ?? []);
+  const source = assignments.find(a => String(a._id) === String(aid));
+
+  const [title, setTitle] = useState(source?.title ?? "");
+  const [description, setDescription] = useState(source?.description ?? "");
+  const [points, setPoints] = useState(source?.points ?? 0);
+  const [dueDate, setDueDate] = useState(source?.dueDate ?? "");
+  const [availableDate, setAvailableDate] = useState(source?.availableDate ?? "");
+  const [availableUntilDate, setAvailableUntilDate] = useState(source?.availableUntilDate ?? "");
+
+  
+  useEffect(() => {
+    setTitle(source?.title ?? "");
+    setDescription(source?.description ?? "");
+    setPoints(source?.points ?? 0);
+    setDueDate(source?.dueDate ?? "");
+    setAvailableDate(source?.availableDate ?? "");
+    setAvailableUntilDate(source?.availableUntilDate ?? "");
+  }, [source]);
+
+  const onSave = () => {
+    if (!source) return;
+    const updated = {
+      ...source,
+      title,
+      description,
+      points: Number(points),
+      dueDate,
+      availableDate,
+      availableUntilDate,
+    };
+    dispatch(updateAssignment(updated));
+  };
+
   return (
     <div id="wd-assignments-editor">
+      <div className="mb-3">
+        <h3 className="mb-2"><Breadcrumb course={useSelector((s: any) => (s.coursesReducer?.courses ?? []).find((c: any) => c._id === cid))} /></h3>
+      </div>
       <label htmlFor="wd-name"> Assignment Name</label>
-      <input id="wd-name" defaultValue={assignment?.title} /><br /><br />
-      <textarea id="wd-description">
-{assignment?.description}
-      </textarea>
+      <input id="wd-name" value={title} onChange={(e) => setTitle(e.target.value)} /><br /><br />
+      <textarea id="wd-description" value={description} onChange={(e) => setDescription(e.target.value)} />
       <br />
       <table>
+        <tbody>
         <tr>
           <td align="right" valign="top">
             <label htmlFor="wd-points">Points</label>
           </td>
           <td>
-            <input id="wd-points" defaultValue={assignment?.points} />
+            <input id="wd-points" value={String(points)} onChange={(e) => setPoints(Number(e.target.value) ?? 0)} />
           </td>
         </tr>
-        <td align="right" valign="top">
-            <label htmlFor="wd-Assignment-Group">Assignment Group</label>
-          </td>
-        <select>
-          <option>ASSIGNMENTS</option>
-          <option>QUIZZES</option>
-          <option>EXAMS</option>
-          <option>PROJECTS</option>
-        </select>
-        <tr>
-            </tr>
-        <td align="right" valign="top">
-            <label htmlFor="wd-Display-Grade-as">Display Grade as</label>
-          </td>
-        <select>
-          <option>Percentage</option>
-          <option>Letter</option>
-        </select>
-        <tr>
-            </tr>
-        <td align="right" valign="top">
-            <label htmlFor="wd-Submission-Type">Submission Type</label>
-          </td>
-        <select>
-          <option>Online</option>
-          <option>In-Person</option>
-        </select>
-        <h5 id="wd-Online-Entry-Options">Online Entry Options</h5>
-
-<input type="checkbox" name="check-Online-Entry-Options" id="wd-Text-Entry"/>
-<label htmlFor="wd-Text-Entry">Text Entry</label><br/>
-
-<input type="checkbox" name="check-Online-Entry-Options" id="wd-Website-URL"/>
-<label htmlFor="wd-Website-URL">Website URL</label><br/>
-
-<input type="checkbox" name="check-Online-Entry-Options" id="wd-Media-Recordings"/>
-<label htmlFor="wd-Media-Recordings">Media Recordings</label><br/>
-
-<input type="checkbox" name="check-Online-Entry-Options" id="wd-Student-Annotation"/>
-<label htmlFor="wd-Student-Annotation">Student Annotation</label><br/>
-
-<input type="checkbox" name="check-Online-Entry-Options" id="wd-File-Uploads"/>
-<label htmlFor="wd-File-Uploads">File Uploads</label><br/>
-        <tr>
-        <td align="right" valign="top">
-            <label htmlFor="wd-Assign">Assign</label>
-          </td>
-        <select>
-          <option>Assign to Everyone</option>
-          <option>Assign to No one</option>
-        </select>
-        </tr>
+        </tbody>
         <label htmlFor="wd-Due"> Due </label>
-<input type="date"
-       defaultValue={assignment?.dueDate}
-       id="wd-Due"/><br/>
-       <label htmlFor="wd-Available-from"> Available from </label>
-<input type="date"
-       defaultValue={assignment?.availableDate}
-       id="wd-Available-from"/><br/>
-       <label htmlFor="wd-Until"> Until: </label>
-<input type="date"
-       defaultValue={assignment?.availableUntilDate}
-       id="wd-Until"/><br/>
+        <input type="date" value={dueDate ?? ""} onChange={(e) => setDueDate(e.target.value)} id="wd-Due"/><br/>
+        <label htmlFor="wd-Available-from"> Available from </label>
+        <input type="date" value={availableDate ?? ""} onChange={(e) => setAvailableDate(e.target.value)} id="wd-Available-from"/><br/>
+        <label htmlFor="wd-Until"> Until: </label>
+        <input type="date" value={availableUntilDate ?? ""} onChange={(e) => setAvailableUntilDate(e.target.value)} id="wd-Until"/><br/>
       </table>
       <Link href={`/Courses/${cid}/Assignments`}>
         <Button variant="secondary" type="button">Cancel</Button>
       </Link>
       <Link href={`/Courses/${cid}/Assignments`}>
-        <Button variant="danger" size="lg" className="me-1 float-end" id="wd-add-module-btn">
+        <Button variant="danger" size="lg" className="me-1 float-end" id="wd-add-module-btn" onClick={onSave}>
           Save
         </Button>
       </Link>

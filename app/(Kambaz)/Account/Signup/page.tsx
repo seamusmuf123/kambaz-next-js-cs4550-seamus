@@ -1,3 +1,4 @@
+"use client";
 import FormControl from "react-bootstrap/FormControl";
 import Link from "next/link";
 export default function Signup() {
