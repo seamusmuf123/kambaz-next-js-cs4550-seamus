@@ -1,5 +1,5 @@
 "use client"
-import ReduxExamples from "./ReduxExamples/page";
+import ReduxExamples from "./ReduxExamples";
 import PassingFunctions from "./PassingFunctions";
 import React from "react";
 import EventObject from "./EventObject";
@@ -22,7 +22,7 @@ export default function Lab4() {
     <Provider store={store}>
     <div id="wd-passing-functions">
       <h2>Lab 4</h2>
-      <ReduxExamples />
+  <ReduxExamples />
       <PassingFunctions theFunction={sayHello} />
       <EventObject />
       <ClickEvent />
