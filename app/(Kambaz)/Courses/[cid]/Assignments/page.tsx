@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import ListGroup from "react-bootstrap/esm/ListGroup";
 import ListGroupItem from "react-bootstrap/esm/ListGroupItem";
@@ -11,7 +11,8 @@ import AssignmentControlSection from "./AssignmentControlSection";
 import { useParams } from "next/navigation";
 import { useSelector, useDispatch } from "react-redux";
 import Breadcrumb from "../Breadcrumb";
-import { deleteAssignment } from "./reducer";
+import { deleteAssignment, setAssignments } from "./reducer";
+import * as client from "../../client";
 
 export default function Assignments() {
   const { cid } = useParams();
@@ -20,13 +21,6 @@ export default function Assignments() {
   const assignments: any[] = useSelector((state: any) => state.assignmentsReducer?.assignments ?? []);
   const currentUser = useSelector((state: any) => state.accountReducer?.currentUser);
 
-  const items = assignments
-    .filter((a) => a.course === cid)
-    .map((a) => ({
-      ...a,
-      availableDateStr: a.availableDate ?? null,
-      dueDateStr: a.dueDate ?? null,
-    }));
 
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const formatYMD = (s: string) => {
@@ -43,10 +37,36 @@ export default function Assignments() {
     dispatch(deleteAssignment(assignmentId));
   };
 
+  const onRemoveAssignment = async (assignmentId: string) => {
+    if (!confirm("Delete this assignment?")) return;
+      await client.deleteAssignment(assignmentId);
+      const updatedAssignments = assignments.filter((a: any) => a._id !== assignmentId);
+      dispatch(deleteAssignment(updatedAssignments));
+      dispatch(setAssignments(updatedAssignments));
+    };
+
+const fetchAssignments = async () => {
+    const assignments = await client.findMyAssignments(cid as string);
+    console.log(assignments);
+    dispatch(setAssignments(assignments));
+  };
+    useEffect(() => {
+    fetchAssignments();
+  }, []);
+
+  const onCreateAssignmentForCourse = async () => {
+  if (!cid) return;
+  const newAssignment = { items: [], course: cid };
+  await client.createAssignment(cid as string, newAssignment); 
+  fetchAssignments();
+};
+
+
   return (
     <div>
       <div className="mb-3">
-        <h3 className="mb-2"><Breadcrumb course={useSelector((s: any) => (s.coursesReducer?.courses ?? []).find((c: any) => c._id === cid))} /></h3>
+        <h3 className="mb-2"><Breadcrumb course={useSelector((s: any) => 
+          (s.coursesReducer?.courses ?? []).find((c: any) => c._id === cid))} /></h3>
       </div>
       <AssignmentControls />
       <div>
@@ -57,11 +77,12 @@ export default function Assignments() {
             <AssignmentControlSection />
           </div>
 
-          {items.map((assignment) => (
+
+          {assignments.map((assignment) => (
             <ListGroup className="wd-lessons rounded-0" key={assignment._id}>
               <ListGroupItem className="wd-lesson p-3 ps-1" />
               <ListGroup className="wd-assignments-list rounded-0">
-                <ListGroupItem className="wd-assignment-list-item p-3 p-2 d-flex align-items-start">
+                <ListGroupItem className="wd-assignment-list-item p-3 p-2 d-flex align-assignments-start">
                   {currentUser?.role === "FACULTY" ? (
                     <Link
                       href={`/Courses/${cid}/Assignments/${assignment._id}`}
@@ -77,15 +98,15 @@ export default function Assignments() {
                   {currentUser?.role === "FACULTY" && (
                     <AssignmentControlButtons
                       assignmentId={assignment._id}
-                      deleteAssignment={onDelete}
+                      deleteAssignment={onRemoveAssignment}
                       editHref={`/Courses/${cid}/Assignments/${assignment._id}`}
                     />
                   )}
                 </ListGroupItem>
 
                 <ListGroupItem className="wd-assignment-list-item">
-                  Multiple Modules | Not Available Until {assignment.availableDateStr ? formatYMD(assignment.availableDateStr) : "—"}
-                  {" "} | Due: {assignment.dueDateStr ? formatYMD(assignment.dueDateStr) : "—"} | {assignment.points} pts
+                  Multiple Modules | Not Available Until {assignment.availableDate ? formatYMD(assignment.availableDate) : "—"}
+                  {" "} | Due: {assignment.dueDate ? formatYMD(assignment.dueDate) : "—"} | {assignment.points} pts
                 </ListGroupItem>
               </ListGroup>
             </ListGroup>

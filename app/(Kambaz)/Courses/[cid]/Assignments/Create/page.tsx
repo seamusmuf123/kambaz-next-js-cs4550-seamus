@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useSelector } from "react-redux";
@@ -7,8 +7,10 @@ import Breadcrumb from "../../Breadcrumb";
 import Button from "react-bootstrap/esm/Button";
 import { useDispatch } from "react-redux";
 import { addAssignment } from "../reducer";
+import * as client from "../../../client";
 
 export default function AssignmentCreate() {
+  const assignments = useSelector((state: any) => state.assignmentsReducer.assignments);
   const { cid } = useParams<{ cid: string }>();
   const dispatch = useDispatch();
 
@@ -32,10 +34,25 @@ export default function AssignmentCreate() {
     dispatch(addAssignment(toAdd));
   };
 
+  const onCreateAssignmentForCourse = async () => {
+      if (!cid) return;
+      const newAssignment = { title, description, points, availableDate, dueDate, availableUntilDate, course: cid };
+      console.log(newAssignment);
+      const assignment = await client.createAssignment( cid as string, newAssignment);
+      dispatch(addAssignment(assignment));
+      console.log(assignments);
+    };
+
+    useEffect(() => {
+  console.log("Assignments updated:", assignments);
+  console.log("CID is:", cid);
+}, [assignments]);
+
   return (
     <div id="wd-assignments-editor">
       <div className="mb-3">
-        <h3 className="mb-2"><Breadcrumb course={useSelector((s: any) => (s.coursesReducer?.courses ?? []).find((c: any) => c._id === cid))} /></h3>
+        <h3 className="mb-2"><Breadcrumb course={useSelector((s: any) => 
+          (s.coursesReducer?.courses ?? []).find((c: any) => c._id === cid))} /></h3>
       </div>
       <label htmlFor="wd-name"> Assignment Name</label>
       <input id="wd-name" value={title} onChange={(e) => setTitle(e.target.value)} /><br /><br />
@@ -55,7 +72,7 @@ export default function AssignmentCreate() {
         <Button variant="secondary" type="button">Cancel</Button>
       </Link>
       <Link href={`/Courses/${cid}/Assignments`}>
-        <Button variant="danger" size="lg" className="me-1 float-end" id="wd-add-module-btn" onClick={onSave}>
+        <Button variant="danger" size="lg" className="me-1 float-end" id="wd-add-module-btn" onClick={onCreateAssignmentForCourse}>
           Save
         </Button>
       </Link>

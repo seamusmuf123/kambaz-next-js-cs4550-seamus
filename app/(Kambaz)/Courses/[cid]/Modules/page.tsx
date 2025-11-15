@@ -1,7 +1,8 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { addModule as addModuleAction, editModule as editModuleAction, updateModule as updateModuleAction, deleteModule as deleteModuleAction } from "./reducer";
+import { addModule as addModuleAction, editModule as editModuleAction, updateModule as updateModuleAction, 
+  deleteModule as deleteModuleAction, setModules } from "./reducer";
 import ListGroup from "react-bootstrap/esm/ListGroup";
 import ListGroupItem from "react-bootstrap/esm/ListGroupItem";
 import { BsGripVertical } from "react-icons/bs";
@@ -11,7 +12,7 @@ import { useParams } from "next/navigation";
 import ModulesControls from "./ModulesControls";
 import Breadcrumb from "../Breadcrumb";
 import { FormControl } from "react-bootstrap";
-import Link from "next/link";
+import * as client from "../../client";
 
 type Lesson = { _id: string; name: string };
 type Module = {
@@ -26,9 +27,26 @@ export default function Modules() {
 
   const { cid } = useParams();
   const dispatch = useDispatch();
+  
 
   const modules: any[] = useSelector((state: any) => state.modulesReducer?.modules ?? []);
-  const currentUser = useSelector((state: any) => state.accountReducer?.currentUser);
+  const onCreateModuleForCourse = async () => {
+    if (!cid) return;
+    const newModule = { name: moduleName, course: cid };
+    const module = await client.createModuleForCourse(cid as string, newModule);
+    dispatch(setModules([...modules, module]));
+  };
+  const onRemoveModule = async (moduleId: string) => {
+    await client.deleteModule(moduleId);
+    dispatch(setModules(modules.filter((m: any) => m._id !== moduleId)));
+  };
+  const onUpdateModule = async (module: any) => {
+    await client.updateModule(module);
+    const newModules = modules.map((m: any) => m._id === module._id ? module : m );
+    dispatch(setModules(newModules));
+  };
+
+const currentUser = useSelector((state: any) => state.accountReducer?.currentUser);
   const course = useSelector((state: any) => (state.coursesReducer?.courses ?? []).find((c: any) => c._id === cid));
 
   const [moduleName, setModuleName] = React.useState("");
@@ -51,6 +69,17 @@ export default function Modules() {
     dispatch(updateModuleAction(module));
   };
 
+  const fetchModules = async () => {
+    const modules = await client.findModulesForCourse(cid as string);
+    console.log(modules);
+    dispatch(setModules(modules));
+  };
+    useEffect(() => {
+    fetchModules();
+  }, []);
+  
+  
+
   return (
     <div>
       <div className="mb-3">
@@ -58,15 +87,15 @@ export default function Modules() {
       </div>
       
       {currentUser?.role === "FACULTY" && (
-        <ModulesControls moduleName={moduleName} setModuleName={setModuleName} addModule={addModule} />
+        <ModulesControls moduleName={moduleName} setModuleName={setModuleName} addModule={onCreateModuleForCourse} />
       )}
       
 
   <ListGroup id="wd-modules" className="rounded-0 mt-3">
         {modules
-          .filter((m) => m.course === cid)
           .map((module) => (
-            <ListGroupItem key={module._id} className="wd-module p-0 mb-4 fs-5 border-start border-3 border-success rounded-3 overflow-hidden">
+            <ListGroupItem key={module._id} className="wd-module p-0 mb-4 fs-5 border-start border-3 
+            border-success rounded-3 overflow-hidden">
               {!module.editing && (
                 <div className="wd-title p-3 ps-3 bg-light d-flex align-items-center border-bottom">
                   <div className="flex-grow-1 d-flex align-items-center">
@@ -76,7 +105,7 @@ export default function Modules() {
                   {currentUser?.role === "FACULTY" && (
                     <ModuleControlButtons
                       moduleId={module._id}
-                      deleteModule={deleteModule}
+                      deleteModule={(moduleId) => onRemoveModule(moduleId)}
                       editModule={() => editModule(module._id)}
                     />
                   )}
@@ -91,7 +120,7 @@ export default function Modules() {
                     onChange={(e) => updateModule({ ...module, name: e.target.value })}
                     onKeyDown={(e) => {
                       if (e.key === "Enter") {
-                        updateModule({ ...module, editing: false });
+                        onUpdateModule({ ...module, editing: false });
                       }
                     }}
                   />

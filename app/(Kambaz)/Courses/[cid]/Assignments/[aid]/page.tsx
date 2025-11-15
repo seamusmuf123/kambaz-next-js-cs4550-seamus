@@ -6,6 +6,8 @@ import Button from "react-bootstrap/esm/Button";
 import { useSelector, useDispatch } from "react-redux";
 import { updateAssignment } from "../reducer";
 import Breadcrumb from "../../Breadcrumb";
+import * as client from "../../../client";
+import { useRouter } from "next/navigation";
 
 export default function AssignmentEditor() {
   const { cid, aid } = useParams<{ cid: string; aid: string }>();
@@ -31,7 +33,9 @@ export default function AssignmentEditor() {
     setAvailableUntilDate(source?.availableUntilDate ?? "");
   }, [source]);
 
-  const onSave = () => {
+  const router = useRouter();
+
+  const handleSave = async () => {
     if (!source) return;
     const updated = {
       ...source,
@@ -42,7 +46,13 @@ export default function AssignmentEditor() {
       availableDate,
       availableUntilDate,
     };
-    dispatch(updateAssignment(updated));
+    try {
+      await client.updateAssignment(updated);
+      dispatch(updateAssignment(updated));
+      router.push(`/Courses/${cid}/Assignments`);
+    } catch (err) {
+      console.error("Failed to update assignment", err);
+    }
   };
 
   return (
@@ -56,30 +66,46 @@ export default function AssignmentEditor() {
       <br />
       <table>
         <tbody>
-        <tr>
-          <td align="right" valign="top">
-            <label htmlFor="wd-points">Points</label>
-          </td>
-          <td>
-            <input id="wd-points" value={String(points)} onChange={(e) => setPoints(Number(e.target.value) ?? 0)} />
-          </td>
-        </tr>
+          <tr>
+            <td align="right" valign="top">
+              <label htmlFor="wd-points">Points</label>
+            </td>
+            <td>
+              <input id="wd-points" value={String(points)} onChange={(e) => setPoints(Number(e.target.value) ?? 0)} />
+            </td>
+          </tr>
+          <tr>
+            <td align="right" valign="top">
+              <label htmlFor="wd-Due"> Due </label>
+            </td>
+            <td>
+              <input type="date" value={dueDate ?? ""} onChange={(e) => setDueDate(e.target.value)} id="wd-Due" />
+            </td>
+          </tr>
+          <tr>
+            <td align="right" valign="top">
+              <label htmlFor="wd-Available-from"> Available from </label>
+            </td>
+            <td>
+              <input type="date" value={availableDate ?? ""} onChange={(e) => setAvailableDate(e.target.value)} id="wd-Available-from" />
+            </td>
+          </tr>
+          <tr>
+            <td align="right" valign="top">
+              <label htmlFor="wd-Until"> Until: </label>
+            </td>
+            <td>
+              <input type="date" value={availableUntilDate ?? ""} onChange={(e) => setAvailableUntilDate(e.target.value)} id="wd-Until" />
+            </td>
+          </tr>
         </tbody>
-        <label htmlFor="wd-Due"> Due </label>
-        <input type="date" value={dueDate ?? ""} onChange={(e) => setDueDate(e.target.value)} id="wd-Due"/><br/>
-        <label htmlFor="wd-Available-from"> Available from </label>
-        <input type="date" value={availableDate ?? ""} onChange={(e) => setAvailableDate(e.target.value)} id="wd-Available-from"/><br/>
-        <label htmlFor="wd-Until"> Until: </label>
-        <input type="date" value={availableUntilDate ?? ""} onChange={(e) => setAvailableUntilDate(e.target.value)} id="wd-Until"/><br/>
       </table>
       <Link href={`/Courses/${cid}/Assignments`}>
         <Button variant="secondary" type="button">Cancel</Button>
       </Link>
-      <Link href={`/Courses/${cid}/Assignments`}>
-        <Button variant="danger" size="lg" className="me-1 float-end" id="wd-add-module-btn" onClick={onSave}>
-          Save
-        </Button>
-      </Link>
+      <Button variant="danger" size="lg" className="me-1 float-end" id="wd-add-module-btn" onClick={handleSave}>
+        Save
+      </Button>
     </div>
   );
 }
