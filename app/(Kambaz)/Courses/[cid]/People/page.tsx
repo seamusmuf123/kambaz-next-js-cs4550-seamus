@@ -6,7 +6,7 @@ export default function People() {
 
   return (
     <div>
-      <PeopleTable />
+      {/* <PeopleTable /> */}
     </div>
   );
 }

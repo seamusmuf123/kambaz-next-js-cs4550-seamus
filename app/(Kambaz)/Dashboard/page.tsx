@@ -11,6 +11,7 @@ import { addEnrollment, deleteEnrollment } from "../Enrollments/reducer";
 import { Button, Card, CardText, CardTitle, FormControl } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { addNewCourse, deleteCourse, updateCourse, setCourses } from "../Courses/reducer";
+import { USERS_API } from "../Account/client";
 export default function Dashboard() {
   type Course = {
     _id: string;
@@ -49,6 +50,15 @@ export default function Dashboard() {
   const [showAll, setShowAll] = useState<boolean>(false);
 
   if (!currentUser) return <div>Please sign in</div>;
+
+   const enrollIntoCourse = async (userId: string, courseId: string) => {
+   const response = await client.enrollIntoCourse(userId, courseId);
+   dispatch(addEnrollment(response.data) as any);
+  };
+   const unenrollFromCourse = async (userId: string, courseId: string) => {
+   const response = await client.unenrollFromCourse(userId, courseId);
+   dispatch(deleteEnrollment(response.data._id) as any);
+  };
 
   const handleAddCourse = (c: Course) => {
     const courseWithId: Course = { ...c, _id: uuidv4() };
@@ -164,7 +174,7 @@ const fetchCourses = async () => {
                     className="btn btn-success"
                     onClick={(event) => {
                       event.preventDefault();
-                      dispatch(addEnrollment({ _id: uuidv4(), user: currentUser._id, course: course._id }) as any);
+                      enrollIntoCourse(currentUser._id, course._id); 
                     }}
                   >
                     Enroll
@@ -175,7 +185,7 @@ const fetchCourses = async () => {
                     onClick={(event) => {
                       event.preventDefault();
                       const en = enrollments.find((en: Enrollment) => en.user === currentUser._id && en.course === course._id);
-                      if (en) dispatch(deleteEnrollment(en._id) as any);
+                      if (en) unenrollFromCourse(currentUser._id, course._id);
                     }}
                   >
                     Unenroll

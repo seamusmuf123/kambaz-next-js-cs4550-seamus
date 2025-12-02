@@ -29,7 +29,7 @@ export default function Assignments() {
     if (parts.length < 3) return s;
     const [y, m, d] = parts;
     const mi = Number(m) - 1;
-    return `${monthNames[mi] ?? m} ${Number(d)}, ${y}`;
+    return `${monthNames[mi] ?? m} ${Number(d.split("T")[0])}, ${y}`;
   };
 
   const onDelete = (assignmentId: string) => {
@@ -46,7 +46,9 @@ export default function Assignments() {
     };
 
 const fetchAssignments = async () => {
+  console.log("Fetching assignments for course:", cid);
     const assignments = await client.findMyAssignments(cid as string);
+    console.log("Fetched assignmentssssss:", assignments);
     console.log(assignments);
     dispatch(setAssignments(assignments));
   };
@@ -78,7 +80,7 @@ const fetchAssignments = async () => {
           </div>
 
 
-          {assignments.map((assignment) => (
+          {assignments && assignments.map((assignment) => (
             <ListGroup className="wd-lessons rounded-0" key={assignment._id}>
               <ListGroupItem className="wd-lesson p-3 ps-1" />
               <ListGroup className="wd-assignments-list rounded-0">

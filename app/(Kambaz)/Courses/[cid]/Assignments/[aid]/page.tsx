@@ -47,6 +47,8 @@ export default function AssignmentEditor() {
       availableUntilDate,
     };
     try {
+      console.log("Updating assignment with data:", updated);
+      console.log("Assignment ID:", updated._id);
       await client.updateAssignment(updated);
       dispatch(updateAssignment(updated));
       router.push(`/Courses/${cid}/Assignments`);
