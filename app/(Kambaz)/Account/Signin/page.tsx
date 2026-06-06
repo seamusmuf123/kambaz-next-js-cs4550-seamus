@@ -14,16 +14,19 @@ export default function Signin() {
   const router = useRouter();
 
   const handleSignin = async () => {
-    try {
-      const user = await client.signin(credentials);
-      if (!user) return;
+  console.log("SIGNIN CLICKED", credentials);
 
-      dispatch(setCurrentUser(user));
-      router.push("/Dashboard");
-    } catch (error) {
-      console.error("Signin failed:", error);
-    }
-  };
+  try {
+    const user = await client.signin(credentials);
+    console.log("SIGNED IN USER", user);
+
+    if (!user) return;
+    dispatch(setCurrentUser(user));
+    router.push("/Dashboard");
+  } catch (error) {
+    console.error("Signin failed:", error);
+  }
+};
 
   return (
     <div id="wd-signin-screen">
