@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { redirect } from "next/dist/client/components/navigation";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { setCurrentUser } from "../reducer";
@@ -15,16 +15,18 @@ export default function Profile() {
     dispatch(setCurrentUser(updatedProfile));
   };
 
- const fetchProfile = () => {
-  console.log(currentUser);
-   if (!currentUser) return redirect("/Account/Signin");
-   setProfile(currentUser);
- };
- const signout = async () => {
-    await client.signout();
-   dispatch(setCurrentUser(null));
-   redirect("/Account/Signin");
- };
+ const router = useRouter();
+
+const fetchProfile = () => {
+  if (!currentUser) return router.push("/Account/Signin");
+  setProfile(currentUser);
+};
+
+const signout = async () => {
+  await client.signout();
+  dispatch(setCurrentUser(null));
+  router.push("/Account/Signin");
+};
  useEffect(() => {
    fetchProfile();
  }, []);
