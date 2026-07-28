@@ -172,6 +172,7 @@ const fetchCourses = async () => {
                 {!enrollments.some((en: Enrollment) => en.user === currentUser._id && en.course === course._id) ? (
                   <button
                     className="btn btn-success"
+                    id="wd-enroll-course-click"
                     onClick={(event) => {
                       event.preventDefault();
                       enrollIntoCourse(currentUser._id, course._id); 
@@ -182,6 +183,7 @@ const fetchCourses = async () => {
                 ) : (
                   <button
                     className="btn btn-danger ms-2"
+                    id="wd-unenroll-course-click"
                     onClick={(event) => {
                       event.preventDefault();
                       const en = enrollments.find((en: Enrollment) => en.user === currentUser._id && en.course === course._id);
