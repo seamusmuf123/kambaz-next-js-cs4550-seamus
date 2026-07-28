@@ -11,11 +11,11 @@ import Link from "next/link";
 export default function KambazNavigation() {
   const pathname = usePathname() ?? "";
   const links = [
-    { label: "Dashboard", path: "/Dashboard", icon: AiOutlineDashboard },
-    { label: "Courses",   path: "/Courses",   icon: LiaBookSolid },
-    { label: "Calendar",  path: "/Calendar",  icon: IoCalendarOutline },
-    { label: "Inbox",     path: "/Inbox",     icon: FaInbox },
-    { label: "Labs",      path: "/Labs",      icon: LiaCogSolid },
+    { label: "Dashboard", path: "/Kambaz/Dashboard", icon: AiOutlineDashboard },
+    { label: "Courses",   path: "/Kambaz/Courses",   icon: LiaBookSolid },
+    { label: "Calendar",  path: "/Kambaz/Calendar",  icon: IoCalendarOutline },
+    { label: "Inbox",     path: "/Kambaz/Inbox",     icon: FaInbox },
+    { label: "Labs",      path: "/Kambaz/Labs",      icon: LiaCogSolid },
   ];
   return (
     <ListGroup id="wd-kambaz-navigation" style={{ width: 120 }}

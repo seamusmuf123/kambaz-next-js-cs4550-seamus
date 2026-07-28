@@ -52,12 +52,24 @@ export default function Dashboard() {
   if (!currentUser) return <div>Please sign in</div>;
 
    const enrollIntoCourse = async (userId: string, courseId: string) => {
-   const response = await client.enrollIntoCourse(userId, courseId);
-   dispatch(addEnrollment(response.data) as any);
+   try {
+    const enrollment =
+      await client.enrollIntoCourse(userId, courseId);
+
+    dispatch(addEnrollment(enrollment));
+  } catch (error) {
+    console.error("Unable to enroll:", error);
+  }
   };
    const unenrollFromCourse = async (userId: string, courseId: string) => {
-   const response = await client.unenrollFromCourse(userId, courseId);
-   dispatch(deleteEnrollment(response.data._id) as any);
+   try {
+    const deletedEnrollment =
+      await client.unenrollFromCourse(userId, courseId);
+
+    dispatch(deleteEnrollment(deletedEnrollment._id));
+  } catch (error) {
+    console.error("Unable to unenroll:", error);
+  }
   };
 
   const handleAddCourse = (c: Course) => {
