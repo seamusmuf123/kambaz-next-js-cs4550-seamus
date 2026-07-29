@@ -49,7 +49,7 @@ export default function Dashboard() {
   const [course, setCourse] = useState<Course>(defaultCourse);
   const [showAll, setShowAll] = useState<boolean>(false);
 
-  if (!currentUser) return <div>Please sign in</div>;
+  
 
    const enrollIntoCourse = async (userId: string, courseId: string) => {
    try {
@@ -61,16 +61,20 @@ export default function Dashboard() {
     console.error("Unable to enroll:", error);
   }
   };
-   const unenrollFromCourse = async (userId: string, courseId: string) => {
-   try {
-    const deletedEnrollment =
-      await client.unenrollFromCourse(userId, courseId);
+   const unenrollFromCourse = async (
+  enrollment: Enrollment
+) => {
+  try {
+    await client.unenrollFromCourse(
+      enrollment.user,
+      enrollment.course
+    );
 
-    dispatch(deleteEnrollment(deletedEnrollment._id));
+    dispatch(deleteEnrollment(enrollment._id));
   } catch (error) {
     console.error("Unable to unenroll:", error);
   }
-  };
+};
 
   const handleAddCourse = (c: Course) => {
     const courseWithId: Course = { ...c, _id: uuidv4() };
@@ -107,8 +111,12 @@ const fetchCourses = async () => {
   };
 
   useEffect(() => {
+    if (currentUser) {
     fetchCourses();
-  }, []);
+    }
+  }, [currentUser]);
+
+  if (!currentUser) return <div>Please sign in</div>;
 
   return (
     <div id="wd-dashboard">
@@ -197,10 +205,17 @@ const fetchCourses = async () => {
                     className="btn btn-danger ms-2"
                     id="wd-unenroll-course-click"
                     onClick={(event) => {
-                      event.preventDefault();
-                      const en = enrollments.find((en: Enrollment) => en.user === currentUser._id && en.course === course._id);
-                      if (en) unenrollFromCourse(currentUser._id, course._id);
-                    }}
+                  event.preventDefault();
+
+                    const enrollment = enrollments.find(
+                    (en: Enrollment) =>
+                   en.user === currentUser._id &&
+                    en.course === course._id
+                );
+                  if (enrollment) {
+                  unenrollFromCourse(enrollment);
+                 }
+                }}
                   >
                     Unenroll
                   </button>
