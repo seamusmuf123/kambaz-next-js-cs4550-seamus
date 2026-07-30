@@ -84,6 +84,13 @@ export const createAssignment = async (courseId: string, assignment: any) => {
   return data;
 };
 
+export const findAllEnrollments = async () => {
+  const { data } = await axiosWithCredentials.get(
+    `${HTTP_SERVER}/api/enrollments`
+  );
+
+  return data;
+};
 
 export const deleteAssignment = async (id: string) => {
   const { data } = await axiosWithCredentials.delete(
